@@ -1,0 +1,4 @@
+{"quoteId":"quote-edge-before","matchId":"match-edge-001","marketType":"match_winner","selection":"Atlas City","decimalOdds":2.05,"impliedProbability":0.4878,"updatedAtUtc":"2026-06-25T18:06:20.000Z"}
+{"quoteId":"quote-edge-shock","matchId":"match-edge-001","marketType":"match_winner","selection":"Atlas City","decimalOdds":2.55,"impliedProbability":0.3922,"previousDecimalOdds":2.05,"movementBps":2439,"updatedAtUtc":"2026-06-25T18:07:30.000Z"}
+{"quoteId":"quote-normal-late-goal","matchId":"match-normal-002","marketType":"match_winner","selection":"Northbridge","decimalOdds":1.21,"impliedProbability":0.8264,"previousDecimalOdds":1.82,"movementBps":3352,"updatedAtUtc":"2026-06-25T20:47:45.000Z"}
+{"quoteId":"quote-suspended-stale","matchId":"match-suspended-003","marketType":"total_goals","selection":"Over 2.5","decimalOdds":1.93,"impliedProbability":0.5181,"previousDecimalOdds":1.91,"movementBps":105,"updatedAtUtc":"2026-06-25T22:15:00.000Z"}

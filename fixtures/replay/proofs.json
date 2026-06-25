@@ -1,0 +1,13 @@
+[
+  {
+    "receiptId": "proof-edge-001",
+    "matchId": "match-edge-001",
+    "statKey": "score_correction",
+    "statValue": "away correction at 66",
+    "merkleRoot": "replay-root-sharpedge-001",
+    "merkleProof": ["synthetic-proof-a", "synthetic-proof-b"],
+    "verified": true,
+    "verifiedAtUtc": "2026-06-25T18:09:02.000Z",
+    "verificationMode": "replay_fixture"
+  }
+]

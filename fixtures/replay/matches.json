@@ -1,0 +1,44 @@
+[
+  {
+    "matchId": "match-edge-001",
+    "competitionId": "wc26-synthetic",
+    "competitionName": "Synthetic World Cup Replay",
+    "kickoffUtc": "2026-06-25T17:00:00.000Z",
+    "status": "live",
+    "homeTeam": "Atlas City",
+    "awayTeam": "Harbor United",
+    "homeScore": 0,
+    "awayScore": 0,
+    "minute": 64,
+    "updatedAtUtc": "2026-06-25T18:07:30.000Z",
+    "sourceMode": "replay"
+  },
+  {
+    "matchId": "match-normal-002",
+    "competitionId": "wc26-synthetic",
+    "competitionName": "Synthetic World Cup Replay",
+    "kickoffUtc": "2026-06-25T19:00:00.000Z",
+    "status": "finished",
+    "homeTeam": "Northbridge",
+    "awayTeam": "Canal Rovers",
+    "homeScore": 2,
+    "awayScore": 1,
+    "minute": 90,
+    "updatedAtUtc": "2026-06-25T20:55:00.000Z",
+    "sourceMode": "replay"
+  },
+  {
+    "matchId": "match-suspended-003",
+    "competitionId": "wc26-synthetic",
+    "competitionName": "Synthetic World Cup Replay",
+    "kickoffUtc": "2026-06-25T21:00:00.000Z",
+    "status": "suspended",
+    "homeTeam": "Metro FC",
+    "awayTeam": "Valley Town",
+    "homeScore": 1,
+    "awayScore": 1,
+    "minute": 71,
+    "updatedAtUtc": "2026-06-25T22:20:00.000Z",
+    "sourceMode": "replay"
+  }
+]
