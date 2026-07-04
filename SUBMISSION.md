@@ -86,5 +86,5 @@ SharpEdge is a hackathon demo using TxODDS-style World Cup replay data. It does 
 - Live TxLINE networking is not implemented yet.
 - Replay fixtures are synthetic and intentionally small for public-repo safety.
 - The redacted export is a local browser action, not a hosted API.
-- Demo video, public deployment URL, and public repo URL must be filled in before final submission.
+- Demo video URL must be filled in before final submission.
 - The deterministic rule engine is explainable audit logic, not an AI prediction model.

@@ -7,9 +7,9 @@ One-line pitch: SharpEdge is an odds-shock audit agent that detects large line m
 ## Status
 
 - Track: Trading Tools and Agents
-- Live app URL: pending deployment
+- Live app URL: https://txodds-sharpedge.vercel.app
 - Demo video URL: pending recording
-- Public repo URL: pending publication
+- Public repo URL: https://github.com/powermsn/txodds-sharpedge
 - Default mode: replay demo mode
 - Secrets required for judging: none
 
@@ -17,9 +17,9 @@ One-line pitch: SharpEdge is an odds-shock audit agent that detects large line m
 
 Before submitting on Superteam, replace these placeholders:
 
-- Live app URL: `pending deployment`
+- Live app URL: `https://txodds-sharpedge.vercel.app`
 - Demo video URL: `pending recording`
-- Public repo URL: `pending publication`
+- Public repo URL: `https://github.com/powermsn/txodds-sharpedge`
 
 Do not replace them with private, login-gated, wallet-gated, or paid-access links.
 
@@ -136,4 +136,4 @@ npm audit --audit-level=moderate
 - Live TxLINE networking is not implemented in this initial scope.
 - Replay fixtures are synthetic and intentionally small for public-repo safety.
 - The rule engine is deterministic and explainable; it is not an AI prediction model.
-- Demo URLs are placeholders until deployment and video recording are complete.
+- Demo video URL is still pending until recording/upload is complete.
