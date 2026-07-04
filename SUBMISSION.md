@@ -8,6 +8,12 @@ Trading Tools and Agents.
 
 SharpEdge is a paper-only odds-shock audit agent that detects large TxODDS line movement without a matching live match event, explains the rule decision, and exports a redacted incident record.
 
+## Submission Links
+
+- Live app URL: https://txodds-sharpedge.vercel.app
+- Demo video URL: https://www.youtube.com/watch?v=dK9kf2FvMJg
+- Public repo URL: https://github.com/powermsn/txodds-sharpedge
+
 ## Project Summary
 
 SharpEdge is built for trading operations and market-monitoring teams that need to answer one question quickly: did the line move because the match changed, or did the line move before the event feed explained it?
@@ -86,5 +92,4 @@ SharpEdge is a hackathon demo using TxODDS-style World Cup replay data. It does 
 - Live TxLINE networking is not implemented yet.
 - Replay fixtures are synthetic and intentionally small for public-repo safety.
 - The redacted export is a local browser action, not a hosted API.
-- Demo video URL must be filled in before final submission.
 - The deterministic rule engine is explainable audit logic, not an AI prediction model.

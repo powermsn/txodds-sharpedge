@@ -94,4 +94,4 @@ Live mode should fail closed on schema mismatch, retry once for network/rate-lim
 
 - Live TxLINE networking remains a later integration task.
 - The replay client uses deterministic fixture order and short UI timers rather than a full replay-clock abstraction.
-- Demo video and deployment URLs are not available in this scaffold.
+- Live deployment, public repo, and demo video links are recorded in the root README and submission notes.
