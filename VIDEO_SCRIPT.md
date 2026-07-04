@@ -12,13 +12,14 @@ Say:
 
 Point to:
 
-- `SharpEdge odds-shock audit agent`
-- `Paper-only. No execution path.`
-- `Replay demo mode`
+- `SharpEdge`
+- `Paper-only / no execution`
+- `Replay guaranteed`
+- the top evidence strip
 
-## 0:25-1:15 - Odds Shock Radar
+## 0:25-1:15 - Hero Shock Board
 
-Zoom into the Odds Shock Radar.
+Zoom into the hero shock board.
 
 Say:
 
@@ -26,16 +27,16 @@ Say:
 
 Point to:
 
-- `No goal/card event in 75s`
+- `Odds shock with no matching event in 75s`
 - `Odds 2.05 -> 2.55`
 - `2439 bps`
 - `2.03x`
-- `Paper flag only`
-- the bps bar and event timeline
+- `Paper review action`
+- the bps threshold bar and split evidence timeline
 
 ## 1:15-2:00 - Replay Agent Incident
 
-Click `Replay agent incident`.
+Click `Replay incident`.
 
 Say:
 
@@ -43,8 +44,8 @@ Say:
 
 Show:
 
-- agent state changing
-- transcript entries appearing
+- replay stage chips advancing from Watching to Resolved
+- active transcript item highlighting
 - paper-only action log
 
 ## 2:00-3:05 - Rule Inspector

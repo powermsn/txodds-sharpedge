@@ -51,13 +51,13 @@ Replay mode is the primary judge path and works without a TxLINE token. The app 
 - `fixtures/replay/odds.jsonl`
 - `fixtures/replay/proofs.json`
 
-The first screen leads with `SharpEdge odds-shock audit agent`, an Odds Shock Radar, and the primary CTA `Replay agent incident`. The radar makes the core incident visible in under 10 seconds:
+The first screen leads with `SharpEdge`, the TxLINE evidence strip, a hero shock board, and the primary CTA `Replay incident`. The board makes the core incident visible in under 10 seconds:
 
 1. `Odds 2.05 -> 2.55`
 2. `2439 bps shock`
 3. `2.03x threshold`
-4. `No goal/card event in 75s`
-5. `Paper flag only`
+4. `Odds shock with no matching event in 75s`
+5. `Paper review action`
 
 The replay then shows `EventMismatchRule` firing, a `flag for review` paper action, and a later synthetic score correction that resolves the incident as a latency audit.
 

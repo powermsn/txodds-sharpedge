@@ -25,8 +25,8 @@ SharpEdge does not place bets, execute trades, suggest wagers, manage funds, or 
 ## What Judges Should Click
 
 1. Open the live app URL.
-2. Confirm the first screen shows `SharpEdge odds-shock audit agent` and the `Odds Shock Radar`.
-3. Click `Replay agent incident`.
+2. Confirm the first screen shows `SharpEdge`, the TxLINE evidence strip, `Replay guaranteed`, and `Paper-only / no execution`.
+3. Click `Replay incident`.
 4. Inspect `EventMismatchRule` in the Rule Inspector.
 5. Select `MomentumShockRule` to see why it rejected the same incident.
 6. Click `Copy JSON` or `Download JSON` to review the redacted synthetic incident payload.

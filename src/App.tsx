@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   buildAgentIncidentReplay,
   buildRedactedIncidentExport,
@@ -8,42 +8,68 @@ import type { AgentState, RuleEvaluation, TranscriptEntry } from "./domain/types
 import "./styles.css";
 
 const replaySpeeds = [1, 5, 20] as const;
+const replayStages = [
+  "Watching",
+  "Quote shock",
+  "No matching event",
+  "Rule fired",
+  "Paper action logged",
+  "Resolved"
+] as const;
 
 function App() {
   const replay = useMemo(() => buildAgentIncidentReplay(), []);
   const exportPayload = useMemo(() => buildRedactedIncidentExport(replay), [replay]);
   const [visibleTranscript, setVisibleTranscript] = useState<TranscriptEntry[]>([]);
   const [agentState, setAgentState] = useState<AgentState>("idle");
+  const [activeStageIndex, setActiveStageIndex] = useState(-1);
   const [replaySpeed, setReplaySpeed] = useState<(typeof replaySpeeds)[number]>(5);
   const [runCount, setRunCount] = useState(0);
   const [selectedRuleId, setSelectedRuleId] =
     useState<RuleEvaluation["ruleId"]>("EventMismatchRule");
-  const [exportStatus, setExportStatus] = useState("Synthetic JSON ready");
+  const [exportStatus, setExportStatus] = useState("Redacted synthetic JSON ready");
+  const timerRef = useRef<number[]>([]);
 
   const selectedInspection = getRuleInspection(replay, selectedRuleId);
   const activeTranscript =
     visibleTranscript.length > 0 ? visibleTranscript : replay.transcript.slice(0, 2);
+  const activeTranscriptId = visibleTranscript[visibleTranscript.length - 1]?.id;
   const bpsWidth = `${Math.min(100, (Math.abs(replay.currentQuote.movementBps ?? 0) / 2500) * 100)}%`;
   const thresholdMarker = `${Math.min(96, (1200 / 2500) * 100)}%`;
   const exportJson = JSON.stringify(exportPayload, null, 2);
+  const liveStatus = "not configured";
+  const replayStatus = activeStageIndex >= 0 && activeStageIndex < 5 ? "active" : "ready";
+
+  useEffect(() => {
+    return () => {
+      timerRef.current.forEach((timer) => window.clearTimeout(timer));
+      timerRef.current = [];
+    };
+  }, []);
 
   function startReplay() {
+    timerRef.current.forEach((timer) => window.clearTimeout(timer));
+    timerRef.current = [];
     setRunCount((count) => count + 1);
     setVisibleTranscript([]);
     setAgentState("watching");
+    setActiveStageIndex(0);
+    setExportStatus("Redacted synthetic JSON ready");
 
-    replay.transcript.forEach((entry, index) => {
-      window.setTimeout(() => {
-        setVisibleTranscript((current) => [...current, entry]);
+    replayStages.forEach((_, index) => {
+      const timer = window.setTimeout(() => {
+        setActiveStageIndex(index);
+        setAgentState(stageToAgentState(index));
+        setVisibleTranscript((current) => {
+          const entry = replay.transcript[index];
+          if (!entry || current.some((candidate) => candidate.id === entry.id)) {
+            return current;
+          }
 
-        if (entry.kind === "rule") {
-          setAgentState("signal detected");
-        } else if (entry.kind === "action") {
-          setAgentState("paper action logged");
-        } else if (entry.kind === "resolution") {
-          setAgentState("resolved");
-        }
+          return [...current, entry];
+        });
       }, (index * 850) / replaySpeed);
+      timerRef.current.push(timer);
     });
   }
 
@@ -69,89 +95,127 @@ function App() {
 
   return (
     <main className="app-shell">
+      <section className="evidence-strip" aria-label="TxLINE evidence and mode">
+        <span>
+          <strong>SharpEdge</strong>
+          Trading Tools and Agents
+        </span>
+        <span>
+          <strong>Live TxLINE</strong>
+          {liveStatus}
+        </span>
+        <span>
+          <strong>Replay incident</strong>
+          {replayStatus}
+        </span>
+        <span>
+          <strong>Event window</strong>
+          75s
+        </span>
+        <span>
+          <strong>Action mode</strong>
+          paper only
+        </span>
+        <span>
+          <strong>Export</strong>
+          redacted synthetic JSON
+        </span>
+      </section>
+
       <header className="hero">
         <div className="hero-copy">
           <div className="pill-row" aria-label="Mode and compliance">
-            <span className="mode-pill">Replay demo mode</span>
-            <span className="compliance-pill">Paper-only. No execution path.</span>
+            <span className="mode-pill">Replay guaranteed</span>
+            <span className="compliance-pill">Paper-only / no execution</span>
           </div>
           <p className="eyebrow">Trading Tools and Agents</p>
-          <h1>SharpEdge odds-shock audit agent</h1>
+          <h1>SharpEdge</h1>
           <p className="subhead">
-            Detect line movement without a matching live event, explain the rule decision, and log
-            a paper-only review action.
+            Paper-only odds-shock audit agent for checking suspicious line movement against TxLINE
+            match-event evidence.
           </p>
+        </div>
+        <div className="hero-status" aria-label="Current replay state">
+          <span>Current state</span>
+          <strong>{activeStageIndex >= 0 ? replayStages[activeStageIndex] : "Ready"}</strong>
+          <small>Run #{runCount || 1} | {agentState}</small>
         </div>
       </header>
 
-      <section className="shock-radar" aria-label="Odds Shock Radar">
-        <div className="radar-header">
-          <div>
-            <p className="eyebrow">Odds Shock Radar</p>
-            <h2>No goal/card event in 75s</h2>
+      <section className="shock-board" aria-label="Hero shock board">
+        <div className="match-card">
+          <p className="eyebrow">Fixture</p>
+          <h2>
+            {replay.match.homeTeam} <span>vs</span> {replay.match.awayTeam}
+          </h2>
+          <div className="scoreline">
+            <strong>
+              {replay.match.homeScore}-{replay.match.awayScore}
+            </strong>
+            <span>{replay.match.minute}' live replay</span>
           </div>
-          <span className="audit-chip">Paper flag only</span>
+          <p>
+            The agent audits whether the quote shock is explained by nearby TxLINE score or match
+            event evidence.
+          </p>
         </div>
 
-        <div className="radar-grid">
-          <div className="radar-metric odds">
-            <span>Odds</span>
-            <strong>{"2.05 -> 2.55"}</strong>
-            <small>{replay.currentQuote.selection} match winner</small>
+        <div className="shock-card">
+          <div className="board-heading">
+            <div>
+              <p className="eyebrow">Hero incident</p>
+              <h2>Odds shock with no matching event in 75s</h2>
+            </div>
+            <span className="shock-badge">2439 bps</span>
           </div>
-          <div className="radar-metric shock">
-            <span>Shock</span>
-            <strong>2439 bps</strong>
-            <small>decimal odds movement</small>
+
+          <div className="odds-row" aria-label="Quote movement">
+            <span>2.05</span>
+            <div className="odds-track">
+              <i className="threshold-marker" style={{ left: thresholdMarker }} />
+              <i className="odds-fill" style={{ width: bpsWidth }} />
+            </div>
+            <span>2.55</span>
           </div>
-          <div className="radar-metric threshold">
-            <span>Threshold</span>
-            <strong>{replay.primarySignal.strength.toFixed(2)}x</strong>
-            <small>EventMismatchRule threshold</small>
+          <div className="track-labels">
+            <span>Quote before</span>
+            <span>1200 bps threshold</span>
+            <span>Quote shock</span>
           </div>
-          <div className="radar-metric event-gap">
-            <span>TxLINE event window</span>
-            <strong>No match</strong>
-            <small>goal / red card / correction / status</small>
+
+          <div className="split-timeline" aria-label="Split evidence timeline">
+            <div className="evidence-rail quote-rail">
+              <span className="rail-label">Odds rail</span>
+              <strong>18:07:30 quote shock</strong>
+              <small>Atlas City moves 2.05 to 2.55</small>
+            </div>
+            <div className="evidence-rail event-rail">
+              <span className="rail-label">TxLINE event rail</span>
+              <strong>No goal/card/correction</strong>
+              <small>Only period_start before the quote update</small>
+            </div>
           </div>
         </div>
 
-        <div className="bps-visual" aria-label="Bps shock bar">
-          <div className="bps-labels">
-            <span>0 bps</span>
-            <span>1200 bps rule threshold</span>
-            <span>2500 bps</span>
-          </div>
-          <div className="bps-track">
-            <span className="threshold-marker" style={{ left: thresholdMarker }} />
-            <span className="bps-fill" style={{ width: bpsWidth }} />
-          </div>
-        </div>
-
-        <div className="event-timeline" aria-label="Event and odds timeline">
-          <div className="timeline-node quiet">
-            <span>18:00:01</span>
-            <strong>period_start</strong>
-            <small>not an impact event</small>
-          </div>
-          <div className="timeline-node shock-node">
-            <span>18:07:30</span>
-            <strong>odds shock</strong>
-            <small>EventMismatchRule fires</small>
-          </div>
-          <div className="timeline-node resolution">
-            <span>18:08:58</span>
-            <strong>score_correction</strong>
-            <small>later latency audit</small>
+        <div className="verdict-card">
+          <p className="eyebrow">Rule verdict</p>
+          <h2>{replay.primarySignal.ruleId}</h2>
+          <strong className="verdict-strength">
+            {replay.primarySignal.strength.toFixed(2)}x threshold
+          </strong>
+          <p>{replay.primarySignal.reason}</p>
+          <div className="paper-action">
+            <span>Paper review action</span>
+            <strong>{replay.paperActions[0].action}</strong>
           </div>
         </div>
       </section>
 
-      <section className="control-strip" aria-label="Replay controls and agent status">
+      <section className="replay-console" aria-label="Replay incident controls">
         <button className="primary-cta" type="button" onClick={startReplay}>
-          Replay agent incident
+          Replay incident
         </button>
-        <div className="speed-row" aria-label="Replay speed">
+        <div className="speed-segment" aria-label="Replay speed">
           {replaySpeeds.map((speed) => (
             <button
               className={speed === replaySpeed ? "speed-button active" : "speed-button"}
@@ -163,23 +227,26 @@ function App() {
             </button>
           ))}
         </div>
-        <div className="status-card">
-          <span>Agent state</span>
-          <strong>{agentState}</strong>
-          <small>Replay run #{runCount || 1}</small>
-        </div>
-        <div className="status-card">
-          <span>Match</span>
-          <strong>
-            {replay.match.homeTeam} vs {replay.match.awayTeam}
-          </strong>
-          <small>
-            {replay.match.minute}' | {replay.match.homeScore}-{replay.match.awayScore}
-          </small>
+        <div className="stage-strip" aria-label="Replay stage progression">
+          {replayStages.map((stage, index) => (
+            <span
+              className={[
+                "stage-chip",
+                index === activeStageIndex ? "active" : "",
+                index < activeStageIndex ? "complete" : ""
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              key={stage}
+            >
+              {index < activeStageIndex ? "ok" : index === activeStageIndex ? "now" : "wait"}{" "}
+              {stage}
+            </span>
+          ))}
         </div>
       </section>
 
-      <section className="workbench">
+      <section className="analyst-workbench">
         <section className="panel rule-inspector" aria-label="Rule Inspector">
           <div className="panel-heading">
             <div>
@@ -187,7 +254,7 @@ function App() {
               <h2>{selectedInspection.ruleId}</h2>
             </div>
             <span className={selectedInspection.state === "fired" ? "state-fired" : "state-rejected"}>
-              {selectedInspection.state}
+              {selectedInspection.state === "fired" ? "! fired" : "x rejected"}
             </span>
           </div>
 
@@ -200,7 +267,7 @@ function App() {
                 onClick={() => setSelectedRuleId(rule.ruleId)}
               >
                 <span>{rule.ruleId}</span>
-                <small>{rule.fired ? "fired" : "rejected"}</small>
+                <small>{rule.fired ? "! fired" : "x rejected"}</small>
               </button>
             ))}
           </div>
@@ -241,6 +308,32 @@ function App() {
           </div>
         </section>
 
+        <aside className="transcript-rail" aria-label="Agent replay transcript">
+          <div className="panel-heading">
+            <div>
+              <p className="eyebrow">Streaming transcript</p>
+              <h2>Decision trace</h2>
+            </div>
+            <span>
+              {activeTranscript.length}/{replay.transcript.length}
+            </span>
+          </div>
+          {activeTranscript.map((entry) => (
+            <article
+              className={`timeline-entry ${entry.kind} ${
+                entry.id === activeTranscriptId ? "active" : ""
+              }`}
+              key={entry.id}
+            >
+              <time>{new Date(entry.timestampUtc).toLocaleTimeString("en-US", { hour12: false })}</time>
+              <div>
+                <strong>{entry.title}</strong>
+                <p>{entry.message}</p>
+              </div>
+            </article>
+          ))}
+        </aside>
+
         <section className="panel risk-panel" aria-label="Risk and false positives">
           <p className="eyebrow">Risk panel</p>
           <h2>Why this may be wrong</h2>
@@ -250,8 +343,8 @@ function App() {
         </section>
 
         <section className="panel action-log" aria-label="Paper-only action log">
-          <p className="eyebrow">Audit log</p>
-          <h2>Paper-only action</h2>
+          <p className="eyebrow">Audit package</p>
+          <h2>Paper-only action and export</h2>
           {replay.paperActions.map((action) => (
             <article key={action.id}>
               <strong>{action.action}</strong>
@@ -271,29 +364,6 @@ function App() {
           </div>
           <small>{exportStatus}</small>
         </section>
-      </section>
-
-      <section className="lower-grid">
-        <section className="panel transcript-panel" aria-label="Agent replay transcript">
-          <div className="panel-heading">
-            <div>
-              <p className="eyebrow">Agent replay transcript</p>
-              <h2>Inspectable decision trace</h2>
-            </div>
-            <span>
-              {activeTranscript.length}/{replay.transcript.length}
-            </span>
-          </div>
-          {activeTranscript.map((entry) => (
-            <article className={`timeline-entry ${entry.kind}`} key={entry.id}>
-              <time>{new Date(entry.timestampUtc).toLocaleTimeString("en-US", { hour12: false })}</time>
-              <div>
-                <strong>{entry.title}</strong>
-                <p>{entry.message}</p>
-              </div>
-            </article>
-          ))}
-        </section>
 
         <section className="panel endpoint-list" aria-label="TxLINE endpoints">
           <p className="eyebrow">TxLINE endpoints</p>
@@ -305,6 +375,19 @@ function App() {
       </section>
     </main>
   );
+}
+
+function stageToAgentState(stageIndex: number): AgentState {
+  if (stageIndex <= 0) {
+    return "watching";
+  }
+  if (stageIndex <= 3) {
+    return "signal detected";
+  }
+  if (stageIndex === 4) {
+    return "paper action logged";
+  }
+  return "resolved";
 }
 
 export default App;
